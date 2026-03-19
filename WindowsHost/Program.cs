@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Net;
 using TabMirror.Host.Capture;
 using TabMirror.Host.Discovery;
 using TabMirror.Host.Encoding;
