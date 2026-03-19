@@ -24,3 +24,4 @@ local.properties
 jdk/
 openjdk21.zip
 tab_mirror_design.md
+WindowsHost/ffmpeg.exe
