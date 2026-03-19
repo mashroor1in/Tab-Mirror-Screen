@@ -77,16 +77,27 @@ internal class Program
         };
 
         // ── 4. Start mDNS advertisement ─────────────────────────────────────
-        await discovery.StartAdvertisingAsync(StreamServer.VideoPort, StreamServer.ControlPort);
+        var localIps = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName())
+            .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            .ToList();
+        
+        var primaryIp = localIps.FirstOrDefault() ?? IPAddress.Loopback;
+        await discovery.StartAdvertisingAsync(StreamServer.VideoPort, StreamServer.ControlPort, primaryIp);
 
         // ── 5. Print connection info ────────────────────────────────────────
-        var localIPs = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName())
-            .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-            .Select(ip => ip.ToString());
+        Console.WriteLine("\n╔══════════════════════════════════════════════════════════╗");
+        Console.WriteLine("║                 CONNECTION INFORMATION                   ║");
+        Console.WriteLine("╠══════════════════════════════════════════════════════════╣");
+        Console.WriteLine($"║  PC IP:  {primaryIp.ToString().PadRight(47)} ║");
+        if (localIps.Count > 1)
+        {
+            foreach(var ip in localIps.Skip(1))
+                Console.WriteLine($"║  Alt IP: {ip.ToString().PadRight(47)} ║");
+        }
+        Console.WriteLine("║                                                          ║");
+        Console.WriteLine($"║  Video Port: {StreamServer.VideoPort.ToString().PadRight(5)} | Control Port: {StreamServer.ControlPort.ToString().PadRight(5)}          ║");
+        Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
 
-        Console.WriteLine("\n[Host] Waiting for Android client...");
-        Console.WriteLine($"       PC IP: {string.Join(", ", localIPs)}");
-        Console.WriteLine($"       Video port: {StreamServer.VideoPort} | Control: {StreamServer.ControlPort} | Stats: {StatsReporter.StatsPort}");
         Console.WriteLine("\n[Host] For USB/ADB mode run on PC:");
         Console.WriteLine($"       adb reverse tcp:{StreamServer.VideoPort} tcp:{StreamServer.VideoPort}");
         Console.WriteLine($"       adb reverse tcp:{StreamServer.ControlPort} tcp:{StreamServer.ControlPort}");

@@ -27,11 +27,11 @@ public sealed class DiscoveryService : IDisposable
     private byte[]? _responsePacket;
 
     public async Task StartAdvertisingAsync(int videoPort, int controlPort,
-        string instanceName = "TabMirror")
+        IPAddress localIp, string instanceName = "TabMirror")
     {
         try
         {
-            _responsePacket = BuildMdnsResponse(instanceName, videoPort, controlPort);
+            _responsePacket = BuildMdnsResponse(instanceName, videoPort, controlPort, localIp);
 
             _client = new UdpClient();
             _client.Client.SetSocketOption(SocketOptionLevel.Socket,
@@ -73,27 +73,30 @@ public sealed class DiscoveryService : IDisposable
     }
 
     /// <summary>
-    /// Builds a minimal mDNS DNS-SD response advertising the PTR + SRV + TXT records.
+    /// Builds a minimal mDNS DNS-SD response advertising the PTR + SRV + TXT + A records.
     /// This is a hand-rolled DNS packet in Annex-B format.
     /// </summary>
-    private static byte[] BuildMdnsResponse(string instance, int videoPort, int controlPort)
+    private static byte[] BuildMdnsResponse(string instance, int videoPort, int controlPort, IPAddress localIp)
     {
         // DNS message: header (12 bytes) + answer records
         using var ms = new System.IO.MemoryStream();
         using var bw = new System.IO.BinaryWriter(ms, System.Text.Encoding.ASCII, leaveOpen: true);
+        
+        string hostname = Dns.GetHostName();
+        if (!hostname.EndsWith(".local")) hostname += ".local";
 
         // Header
         bw.Write((ushort)0);           // ID = 0 (multicast)
         bw.Write(ToBE16(0x8400));      // QR=1 (response), AA=1
         bw.Write(ToBE16(0));           // QDCOUNT = 0
-        bw.Write(ToBE16(3));           // ANCOUNT = 3 (PTR + SRV + TXT)
+        bw.Write(ToBE16(4));           // ANCOUNT = 4 (PTR + SRV + TXT + A)
         bw.Write(ToBE16(0));           // NSCOUNT = 0
         bw.Write(ToBE16(0));           // ARCOUNT = 0
 
         // ── PTR record: _tabmirror._tcp.local. → <instance>._tabmirror._tcp.local. ──
         WriteDnsName(bw, "_tabmirror._tcp.local");
         bw.Write(ToBE16(12));          // TYPE = PTR
-        bw.Write(ToBE16(1));           // CLASS = IN  (0x8001 = cache-flush | IN)
+        bw.Write(ToBE16(1));           // CLASS = IN
         bw.Write(ToBE32(4500));        // TTL = 75 minutes
         string fullInstance = $"{instance}._tabmirror._tcp.local";
         var ptrRData = EncodeDnsName(fullInstance);
@@ -105,8 +108,7 @@ public sealed class DiscoveryService : IDisposable
         bw.Write(ToBE16(33));          // TYPE = SRV
         bw.Write(ToBE16(0x8001));      // CLASS = cache-flush | IN
         bw.Write(ToBE32(120));         // TTL = 2 minutes
-        string hostTarget = Dns.GetHostName() + ".local";
-        var targetBytes = EncodeDnsName(hostTarget);
+        var targetBytes = EncodeDnsName(hostname);
         bw.Write(ToBE16((ushort)(6 + targetBytes.Length))); // RDLENGTH
         bw.Write(ToBE16(0));           // Priority
         bw.Write(ToBE16(0));           // Weight
@@ -122,6 +124,14 @@ public sealed class DiscoveryService : IDisposable
         byte[] txtBytes = EncodeTxtRecord(txtData);
         bw.Write(ToBE16((ushort)txtBytes.Length));
         bw.Write(txtBytes);
+        
+        // ── A record: host.local → IP ──
+        WriteDnsName(bw, hostname);
+        bw.Write(ToBE16(1));           // TYPE = A
+        bw.Write(ToBE16(0x8001));      // CLASS = cache-flush | IN
+        bw.Write(ToBE32(120));         // TTL = 2 minutes
+        bw.Write(ToBE16(4));           // RDLENGTH = 4 bytes for IPv4
+        bw.Write(localIp.GetAddressBytes());
 
         return ms.ToArray();
     }

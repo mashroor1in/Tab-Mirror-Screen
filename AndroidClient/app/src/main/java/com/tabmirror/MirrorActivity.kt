@@ -194,6 +194,7 @@ class MirrorActivity : AppCompatActivity(), SurfaceHolder.Callback {
                 Log.i(TAG, "Discovery started: $regType")
             }
             override fun onServiceFound(info: NsdServiceInfo) {
+                Log.i(TAG, "Service found: ${info.serviceName} (${info.serviceType})")
                 nsdManager?.resolveService(info, object : NsdManager.ResolveListener {
                     override fun onServiceResolved(resolvedInfo: NsdServiceInfo) {
                         val ip   = resolvedInfo.host.hostAddress ?: return
@@ -201,17 +202,27 @@ class MirrorActivity : AppCompatActivity(), SurfaceHolder.Callback {
                         Log.i(TAG, "Found TabMirror at $ip:$port")
                         runOnUiThread {
                             binding.etHost.setText(ip)
-                            binding.tvStatus.text = "Found server at $ip — tap Connect"
+                            binding.tvStatus.text = "Found $ip — tap Connect"
+                            Toast.makeText(this@MirrorActivity, "Found host: $ip", Toast.LENGTH_SHORT).show()
                         }
                     }
                     override fun onResolveFailed(i: NsdServiceInfo, code: Int) {
-                        Log.w(TAG, "Resolve failed: $code")
+                        Log.w(TAG, "Resolve failed: $code for ${i.serviceName}")
+                        runOnUiThread {
+                            binding.tvStatus.text = "Found service but resolution failed (Code: $code)"
+                        }
                     }
                 })
             }
-            override fun onServiceLost(info: NsdServiceInfo)    { Log.i(TAG, "Service lost") }
+            override fun onServiceLost(info: NsdServiceInfo)    { 
+                Log.i(TAG, "Service lost: ${info.serviceName}") 
+                runOnUiThread { binding.tvStatus.text = "Service lost." }
+            }
             override fun onDiscoveryStopped(sType: String)       { Log.i(TAG, "Discovery stopped") }
-            override fun onStartDiscoveryFailed(s: String, e: Int) { Log.e(TAG, "Start failed: $e") }
+            override fun onStartDiscoveryFailed(s: String, e: Int) { 
+                Log.e(TAG, "Start failed: $e") 
+                runOnUiThread { binding.tvStatus.text = "Discovery start failed: $e" }
+            }
             override fun onStopDiscoveryFailed(s: String, e: Int)  { Log.e(TAG, "Stop failed: $e") }
         }
 
