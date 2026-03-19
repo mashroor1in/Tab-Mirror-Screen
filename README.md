@@ -1,16 +1,16 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Mash/Tab-Mirror-Screen/main/assets/tab_mirror_hero.png" alt="Tab Mirror Project Illustration" width="800">
+  <img src="https://raw.githubusercontent.com/mashroor1in/Tab-Mirror-Screen/main/assets/tab_mirror_hero.png" alt="Tab Mirror Project Illustration" width="800">
 </p>
 
 # 📱 Tab Mirror Screen
 **Transform your Samsung Galaxy Tab A9+ (or any Android tablet) into a high-performance second monitor for your Windows PC.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Stars](https://img.shields.io/github/stars/Mash/Tab-Mirror-Screen.svg)](https://github.com/Mash/Tab-Mirror-Screen/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/mashroor1in/Tab-Mirror-Screen.svg)](https://github.com/mashroor1in/Tab-Mirror-Screen/stargazers)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](https://www.microsoft.com/windows)
 [![Platform: Android](https://img.shields.io/badge/Platform-Android-3DDC84.svg)](https://www.android.com)
 
-[**📥 Download Latest Release**](https://github.com/mashroor1in/Tab-Mirror-Scree/releases/latest)
+[**📥 Download Latest Release**](https://github.com/mashroor1in/Tab-Mirror-Screen/releases/latest)
 
 A professional-grade, self-hosted, open-source solution. No subscriptions, no cloud lag, no third-party servers. Just pure performance.
 
