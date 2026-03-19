@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- net8.0-windows: gives access to System.Drawing for Rectangle, etc.
+         No WinRT SDK required. DXGI via raw COM P/Invoke. Encode via ffmpeg.exe. -->
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>TabMirror.Host</RootNamespace>
+    <AssemblyName>TabMirror.Host</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <!-- No NuGet packages needed:
+       - DXGI screen capture: raw COM P/Invoke (Capture/DxgiCapture.cs)
+       - H.264 encoding:      ffmpeg.exe subprocess pipe (Encoding/FfmpegEncoder.cs)
+       - mDNS discovery:      raw UDP multicast sockets (Discovery/DiscoveryService.cs)
+       - Touch injection:     Win32 SendInput P/Invoke (Input/InputInjector.cs)
+       - Streaming:           System.Net.Sockets (Network/StreamServer.cs)
+  -->
+
+</Project>
+

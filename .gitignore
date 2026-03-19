@@ -1,0 +1,26 @@
+# .NET / C# ignores
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.doccache
+.vs/
+
+# Android / Gradle / Kotlin ignores
+.gradle/
+build/
+captures/
+local.properties
+.idea/
+*.iml
+*.iws
+.DS_Store
+
+# Release Binaries
+*.apk
+*.zip
+
+# Large / External files
+jdk/
+openjdk21.zip
+tab_mirror_design.md

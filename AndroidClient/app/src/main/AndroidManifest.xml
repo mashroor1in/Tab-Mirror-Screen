@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tabmirror">
+
+    <!-- Network permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
+    <!-- Keep screen on while streaming -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Hardware requirements -->
+    <uses-feature android:name="android.hardware.touchscreen" android:required="true" />
+
+    <application
+        android:allowBackup="false"
+        android:label="Tab Mirror"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TabMirror"
+        android:hardwareAccelerated="true">
+
+        <activity
+            android:name=".MirrorActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustNothing">
+
+            <!-- Keep screen on while activity is in foreground -->
+            <meta-data
+                android:name="android.app.keep_screen_on"
+                android:value="true" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

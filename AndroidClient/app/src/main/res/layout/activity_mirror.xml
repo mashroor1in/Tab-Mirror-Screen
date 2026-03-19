@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark">
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:id="@+id/connectionPanel"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/glass_panel_bg"
+        android:padding="32dp"
+        android:elevation="12dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TAB MIRROR"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:gravity="center"
+            android:letterSpacing="0.2"
+            android:fontFamily="sans-serif-black"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Premium Desktop Extension"
+            android:textSize="14sp"
+            android:textColor="@color/accent_cyan"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="32dp" />
+
+        <EditText
+            android:id="@+id/etHost"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:hint="PC IP Address (e.g. 192.168.1.10)"
+            android:textColorHint="@color/text_secondary"
+            android:textColor="@color/text_primary"
+            android:background="@drawable/glass_panel_bg"
+            android:paddingHorizontal="16dp"
+            android:inputType="textUri"
+            android:imeOptions="actionDone"
+            android:layout_marginBottom="16dp" />
+
+        <CheckBox
+            android:id="@+id/cbUsbMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="USB Mode (Ultra Low Latency)"
+            android:textColor="@color/text_secondary"
+            android:buttonTint="@color/accent_blue"
+            android:layout_marginBottom="24dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnConnect"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="CONNECT"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_gradient_bg"
+            android:elevation="4dp"
+            android:layout_marginBottom="12dp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnDiscover"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="AUTO-DISCOVER"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"
+            android:background="?attr/selectableItemBackground"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ready to connect"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:alpha="0.7"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnDisconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:text="✕ Disconnect"
+        android:textSize="12sp"
+        android:textAllCaps="false"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/glass_panel_bg"
+        android:backgroundTint="#88FF4B4B"
+        android:textColor="#FFFFFF"
+        android:visibility="gone" />
+
+    <com.tabmirror.DebugOverlayView
+        android:id="@+id/debugOverlay"
+        android:tag="debugOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|start"
+        android:visibility="gone" />
+
+</FrameLayout>
