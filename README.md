@@ -10,6 +10,8 @@
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-0078D6.svg)](https://www.microsoft.com/windows)
 [![Platform: Android](https://img.shields.io/badge/Platform-Android-3DDC84.svg)](https://www.android.com)
 
+[**📥 Download Latest Release**](https://github.com/mashroor1in/Tab-Mirror-Scree/releases/latest)
+
 A professional-grade, self-hosted, open-source solution. No subscriptions, no cloud lag, no third-party servers. Just pure performance.
 
 ---
