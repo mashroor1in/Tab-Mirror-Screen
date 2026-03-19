@@ -80,24 +80,40 @@ internal class Program
         // ── 4. Start mDNS advertisement ─────────────────────────────────────
         var localIps = System.Net.Dns.GetHostAddresses(System.Net.Dns.GetHostName())
             .Where(ip => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            .OrderByDescending(ip => 
+            {
+                var s = ip.ToString();
+                if (s.StartsWith("192.168.")) return 10;
+                if (s.StartsWith("10.")) return 9;
+                if (s.StartsWith("172.")) return 8;
+                if (s.StartsWith("169.254.")) return -1; // APIPA / Link-local (useless)
+                return 1;
+            })
             .ToList();
         
         var primaryIp = localIps.FirstOrDefault() ?? IPAddress.Loopback;
-        await discovery.StartAdvertisingAsync(StreamServer.VideoPort, StreamServer.ControlPort, primaryIp);
+        await discovery.StartAdvertisingAsync(StreamServer.VideoPort, StreamServer.ControlPort, localIps);
 
         // ── 5. Print connection info ────────────────────────────────────────
+        Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("\n╔══════════════════════════════════════════════════════════╗");
         Console.WriteLine("║                 CONNECTION INFORMATION                   ║");
         Console.WriteLine("╠══════════════════════════════════════════════════════════╣");
-        Console.WriteLine($"║  PC IP:  {primaryIp.ToString().PadRight(47)} ║");
+        Console.Write("║  PC IP:  ");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write(primaryIp.ToString().PadRight(47));
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(" ║");
+        
         if (localIps.Count > 1)
         {
-            foreach(var ip in localIps.Skip(1))
+            foreach(var ip in localIps.Skip(1).Where(ip => !ip.ToString().StartsWith("169.254.")))
                 Console.WriteLine($"║  Alt IP: {ip.ToString().PadRight(47)} ║");
         }
         Console.WriteLine("║                                                          ║");
         Console.WriteLine($"║  Video Port: {StreamServer.VideoPort.ToString().PadRight(5)} | Control Port: {StreamServer.ControlPort.ToString().PadRight(5)}          ║");
         Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
+        Console.ResetColor();
 
         Console.WriteLine("\n[Host] For USB/ADB mode run on PC:");
         Console.WriteLine($"       adb reverse tcp:{StreamServer.VideoPort} tcp:{StreamServer.VideoPort}");
