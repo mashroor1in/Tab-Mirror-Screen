@@ -47,7 +47,8 @@ public sealed class StatsReporter : IDisposable
     {
         _cts = CancellationTokenSource.CreateLinkedTokenSource(parentCt);
 
-        _listener = TcpListener.Create(StatsPort);
+        _listener = new TcpListener(IPAddress.Any, StatsPort);
+        _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         _listener.Start();
 
         _acceptTask = Task.Run(async () =>
