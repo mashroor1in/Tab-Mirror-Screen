@@ -57,8 +57,11 @@ public sealed class StreamServer : IDisposable
     /// <summary>Starts listening in the background and returns immediately.</summary>
     public void Start(CancellationToken ct = default)
     {
-        _videoListener   = TcpListener.Create(VideoPort);
-        _controlListener = TcpListener.Create(ControlPort);
+        _videoListener   = new TcpListener(IPAddress.Any, VideoPort);
+        _videoListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+        
+        _controlListener = new TcpListener(IPAddress.Any, ControlPort);
+        _controlListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         
         _videoListener.Start();
         _controlListener.Start();
