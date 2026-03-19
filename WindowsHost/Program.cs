@@ -83,10 +83,23 @@ internal class Program
             .OrderByDescending(ip => 
             {
                 var s = ip.ToString();
-                if (s.StartsWith("192.168.")) return 10;
+                // Prioritize common home network ranges (Wi-Fi/Ethernet)
+                if (s.StartsWith("192.168.0.") || s.StartsWith("192.168.1.")) return 20;
+                
+                // Keep the one that actually works for the user (Mi Router etc.)
+                if (s.StartsWith("192.168.31.")) return 15; 
+                
+                // General 192.168 or 10.x ranges
+                if (s.StartsWith("192.168.")) 
+                {
+                    // De-prioritize known VirtualBox / VMware ranges
+                    if (s.StartsWith("192.168.56.") || s.StartsWith("192.168.216.") || s.StartsWith("192.168.202.")) return -5;
+                    return 10;
+                }
                 if (s.StartsWith("10.")) return 9;
                 if (s.StartsWith("172.")) return 8;
-                if (s.StartsWith("169.254.")) return -1; // APIPA / Link-local (useless)
+                
+                if (s.StartsWith("169.254.")) return -10; // APIPA / Link-local (useless)
                 return 1;
             })
             .ToList();
@@ -108,12 +121,18 @@ internal class Program
         if (localIps.Count > 1)
         {
             foreach(var ip in localIps.Skip(1).Where(ip => !ip.ToString().StartsWith("169.254.")))
-                Console.WriteLine($"║  Alt IP: {ip.ToString().PadRight(47)} ║");
+            {
+                var s = ip.ToString();
+                bool isVirtual = s.StartsWith("192.168.56.") || s.StartsWith("192.168.216.") || s.StartsWith("192.168.202.");
+                
+                Console.ForegroundColor = isVirtual ? ConsoleColor.DarkGray : ConsoleColor.White;
+                Console.WriteLine($"║  {(isVirtual ? "VM  " : "Alt ")}IP: {s.PadRight(47)} ║");
+            }
         }
+        Console.ResetColor();
         Console.WriteLine("║                                                          ║");
         Console.WriteLine($"║  Video Port: {StreamServer.VideoPort.ToString().PadRight(5)} | Control Port: {StreamServer.ControlPort.ToString().PadRight(5)}          ║");
         Console.WriteLine("╚══════════════════════════════════════════════════════════╝");
-        Console.ResetColor();
 
         Console.WriteLine("\n[Host] For USB/ADB mode run on PC:");
         Console.WriteLine($"       adb reverse tcp:{StreamServer.VideoPort} tcp:{StreamServer.VideoPort}");
